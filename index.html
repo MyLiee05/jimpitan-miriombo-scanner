@@ -1,105 +1,900 @@
 <!doctype html>
 <html lang="id">
+
 <head>
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Scanner QR Jimpitan Miriombo</title>
+<title>Jimpitan Miriombo - Scanner QR</title>
+
 <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f4f7fb;color:#17212b}
-header{background:#1261a0;color:#fff;padding:18px 16px}.brand{font-size:21px;font-weight:800}
-main{max-width:520px;margin:auto;padding:14px}.card{background:#fff;border-radius:18px;padding:16px;margin:12px 0;box-shadow:0 3px 12px #102a430d}
-input{width:100%;padding:12px;border:1px solid #d6dee8;border-radius:11px;margin:6px 0 10px}
-button{border:0;border-radius:12px;padding:12px 15px;font-weight:800;cursor:pointer}.primary{background:#1261a0;color:#fff}.success{background:#16834d;color:#fff}.danger{background:#b9362f;color:#fff}
-#reader{width:100%;margin:auto}.ok{color:#137343}.err{color:#b42318}.big{font-size:22px;font-weight:800}
-.hidden{display:none}.muted{font-size:12px;color:#6b7785}
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#f4f7fb;
+  color:#17212b
+}
+
+header{
+  background:#1261a0;
+  color:#fff;
+  padding:18px 16px
+}
+
+.brand{
+  font-size:21px;
+  font-weight:800
+}
+
+main{
+  max-width:520px;
+  margin:auto;
+  padding:14px
+}
+
+.card{
+  background:#fff;
+  border-radius:18px;
+  padding:16px;
+  margin:12px 0;
+  box-shadow:0 3px 12px #102a430d
+}
+
+input{
+  width:100%;
+  padding:13px;
+  border:1px solid #d6dee8;
+  border-radius:11px;
+  margin:6px 0 10px;
+  font-size:16px
+}
+
+button{
+  border:0;
+  border-radius:12px;
+  padding:12px 15px;
+  font-weight:800;
+  cursor:pointer;
+  font-size:15px
+}
+
+button:disabled{
+  opacity:.6;
+  cursor:not-allowed
+}
+
+.primary{
+  background:#1261a0;
+  color:#fff
+}
+
+.success{
+  background:#16834d;
+  color:#fff
+}
+
+.danger{
+  background:#b9362f;
+  color:#fff
+}
+
+#reader{
+  width:100%;
+  margin:12px auto
+}
+
+.ok{
+  color:#137343;
+  font-weight:700
+}
+
+.err{
+  color:#b42318
+}
+
+.big{
+  font-size:22px;
+  font-weight:800
+}
+
+.hidden{
+  display:none
+}
+
+.muted{
+  font-size:12px;
+  color:#6b7785
+}
+
+.info{
+  background:#eef6ff;
+  border-radius:10px;
+  padding:10px;
+  margin:10px 0;
+  font-size:13px
+}
 </style>
+
 </head>
+
 <body>
-<header><div class="brand">Jimpitan Miriombo</div><div class="muted" style="color:#dbeafe">Scanner QR Petugas</div></header>
+
+<header>
+  <div class="brand">Jimpitan Miriombo</div>
+  <div class="muted" style="color:#dbeafe">
+    Scanner QR Petugas
+  </div>
+</header>
+
 <main>
+
+<!-- LOGIN -->
+
 <div id="loginCard" class="card">
-<h3>Login Petugas</h3>
-<p class="muted">Login ini diperlukan sebelum QR bisa mencatat pembayaran.</p>
-<input id="uid" placeholder="ID Petugas">
-<input id="pin" type="password" placeholder="PIN">
-<button class="primary" style="width:100%" onclick="login()">Masuk</button>
-<p id="loginMsg"></p>
+
+  <h3>Login Petugas</h3>
+
+  <p class="muted">
+    Login diperlukan sebelum QR bisa mencatat pembayaran.
+  </p>
+
+  <input id="uid" placeholder="ID Petugas">
+
+  <input
+    id="pin"
+    type="password"
+    placeholder="PIN"
+  >
+
+  <button
+    class="primary"
+    style="width:100%"
+    onclick="login()"
+  >
+    Masuk
+  </button>
+
+  <p id="loginMsg"></p>
+
 </div>
+
+
+<!-- SCANNER -->
 
 <div id="scanCard" class="card hidden">
-<div id="user"></div>
-<h3>Scan QR Rumah</h3>
-<div id="reader"></div>
-<button class="primary" onclick="startScan()">Mulai Kamera</button>
-<button onclick="stopScan()">Stop</button>
-<p id="msg"></p>
-<hr>
-<input id="manual" placeholder="Kode rumah, contoh 001">
-<button class="success" onclick="handleCode(manual.value)">Input Manual</button>
+
+  <div id="user"></div>
+
+  <h3>Scan QR Rumah</h3>
+
+  <div class="info">
+    Scan QR yang ditempel di rumah.
+    <br>
+    Contoh kode: <b>001</b>
+  </div>
+
+  <div id="reader"></div>
+
+  <button
+    class="primary"
+    onclick="startScan()"
+  >
+    Mulai Kamera
+  </button>
+
+  <button onclick="stopScan()">
+    Stop
+  </button>
+
+  <p id="msg"></p>
+
+  <hr>
+
+  <input
+    id="manual"
+    placeholder="Kode rumah, contoh 001"
+    inputmode="numeric"
+  >
+
+  <button
+    class="success"
+    onclick="handleCode(document.getElementById('manual').value)"
+  >
+    Input Manual
+  </button>
+
 </div>
+
+
+<!-- DATA RUMAH -->
 
 <div id="houseCard" class="card hidden">
-<div class="muted">Rumah terdeteksi</div>
-<div id="houseName" class="big"></div>
-<div id="houseCode"></div>
-<p id="houseStatus"></p>
-<button id="payBtn" class="success" onclick="pay()">Catat Pembayaran Rp2.000</button>
-<button onclick="clearHouse()">Scan Rumah Lain</button>
+
+  <div class="muted">
+    Rumah terdeteksi
+  </div>
+
+  <div
+    id="houseName"
+    class="big"
+  ></div>
+
+  <div id="houseCode"></div>
+
+  <p id="houseStatus"></p>
+
+  <button
+    id="payBtn"
+    class="success"
+    onclick="pay()"
+  >
+    Catat Pembayaran
+  </button>
+
+  <br><br>
+
+  <button onclick="clearHouse()">
+    Scan Rumah Lain
+  </button>
+
 </div>
+
 </main>
+
+
 <script>
-const API='https://script.google.com/macros/s/AKfycbwcOC_OmACP-_mpfFYz69rJxRtTw0jnjEszbT3davbsRjDe-uHSK7xYFw3YsPFgpSp2/exec';
-let token=sessionStorage.getItem('JM_TOKEN')||'', user=JSON.parse(sessionStorage.getItem('JM_USER')||'null'), scanner=null, current=null;
+
+/* =========================================
+   API APPS SCRIPT
+========================================= */
+
+const API =
+'https://script.google.com/macros/s/AKfycbwcOC_OmACP-_mpfFYz69rJxRtTw0jnjEszbT3davbsRjDe-uHSK7xYFw3YsPFgpSp2/exec';
+
+
+/* =========================================
+   SESSION
+========================================= */
+
+let token =
+sessionStorage.getItem('JM_TOKEN') || '';
+
+let user =
+JSON.parse(
+  sessionStorage.getItem('JM_USER') || 'null'
+);
+
+let scanner = null;
+let current = null;
+
+
+/* =========================================
+   JSONP
+========================================= */
 
 function jsonp(params, cb){
-  const name='jm_cb_'+Date.now()+'_'+Math.floor(Math.random()*9999);
-  window[name]=function(data){delete window[name];s.remove();cb(data)};
-  const s=document.createElement('script');
-  params.api='1';params.callback=name;
-  s.src=API+'?'+new URLSearchParams(params).toString();
-  s.onerror=()=>{delete window[name];s.remove();cb({ok:false,message:'Gagal terhubung ke server.'})};
+
+  const name =
+    'jm_cb_' +
+    Date.now() +
+    '_' +
+    Math.floor(Math.random()*9999);
+
+  window[name] = function(data){
+
+    delete window[name];
+
+    if(s){
+      s.remove();
+    }
+
+    cb(data);
+  };
+
+  const s =
+    document.createElement('script');
+
+  params.api = '1';
+  params.callback = name;
+
+  s.src =
+    API +
+    '?' +
+    new URLSearchParams(params).toString();
+
+  s.onerror = function(){
+
+    delete window[name];
+
+    if(s){
+      s.remove();
+    }
+
+    cb({
+      ok:false,
+      message:'Gagal terhubung ke server.'
+    });
+
+  };
+
   document.body.appendChild(s);
 }
+
+
+/* =========================================
+   LOGIN
+========================================= */
+
 function login(){
- jsonp({action:'login',id:uid.value.trim(),pin:pin.value},r=>{
-  if(!r.ok){loginMsg.textContent=r.message;return}
-  token=r.token;user=r.user;sessionStorage.setItem('JM_TOKEN',token);sessionStorage.setItem('JM_USER',JSON.stringify(user));
-  loginCard.classList.add('hidden');scanCard.classList.remove('hidden');document.getElementById('user').textContent=user.name+' · '+user.role;
- });
+
+  const id =
+    document.getElementById('uid').value.trim();
+
+  const pin =
+    document.getElementById('pin').value;
+
+  if(!id || !pin){
+
+    document.getElementById('loginMsg')
+      .textContent =
+      'ID dan PIN wajib diisi.';
+
+    return;
+  }
+
+  jsonp(
+    {
+      action:'login',
+      id:id,
+      pin:pin
+    },
+
+    function(r){
+
+      if(!r.ok){
+
+        document.getElementById('loginMsg')
+          .textContent =
+          r.message || 'Login gagal.';
+
+        return;
+      }
+
+      token = r.token;
+      user = r.user;
+
+      sessionStorage.setItem(
+        'JM_TOKEN',
+        token
+      );
+
+      sessionStorage.setItem(
+        'JM_USER',
+        JSON.stringify(user)
+      );
+
+      document
+        .getElementById('loginCard')
+        .classList.add('hidden');
+
+      document
+        .getElementById('scanCard')
+        .classList.remove('hidden');
+
+      document
+        .getElementById('user')
+        .textContent =
+        user.name +
+        ' · ' +
+        user.role;
+
+    }
+  );
+
 }
-function handleCode(code){
- code=String(code||'').replace(/[^0-9]/g,'').padStart(3,'0');
- if(!/^\d{3}$/.test(code)){msg.textContent='Kode rumah tidak valid.';return}
- jsonp({action:'house',token:token,kode:code},r=>{
-   if(!r.ok){if(r.auth===false){logout();return}msg.textContent=r.message;return}
-   current=r.house;houseCard.classList.remove('hidden');houseName.textContent=r.house.nama;houseCode.textContent='Kode: '+r.house.kode;
-   houseStatus.textContent=r.paid?'SUDAH BAYAR MINGGU INI':'BELUM BAYAR · '+format(r.house.nominal);
-   houseStatus.className=r.paid?'ok':'';
-   payBtn.disabled=!!r.paid;payBtn.textContent=r.paid?'Sudah Bayar Minggu Ini':'Catat Pembayaran '+format(r.house.nominal);
- });
+
+
+/* =========================================
+   HANDLE KODE RUMAH
+========================================= */
+
+function handleCode(rawCode){
+
+  if(!token){
+
+    document.getElementById('msg')
+      .textContent =
+      'Login terlebih dahulu.';
+
+    return;
+  }
+
+
+  /*
+    Ambil angka saja.
+
+    Contoh:
+    001       -> 001
+    Rumah 001 -> 001
+    1         -> 1
+  */
+
+  let digits =
+    String(rawCode || '')
+      .replace(/[^0-9]/g,'');
+
+
+  if(!digits){
+
+    document.getElementById('msg')
+      .textContent =
+      'Kode rumah tidak valid.';
+
+    return;
+  }
+
+
+  /*
+    Batasi maksimal 3 digit
+  */
+
+  digits =
+    digits.slice(-3);
+
+
+  /*
+    Format tampilan selalu 3 digit
+  */
+
+  const padded =
+    digits.padStart(3,'0');
+
+
+  /*
+    Database kamu:
+
+    Kolom A:
+    1
+    2
+    3
+    ...
+    80
+
+    Karena itu kita coba dua format:
+
+    1. 001
+    2. 1
+
+    Kalau yang pertama gagal,
+    otomatis mencoba yang kedua.
+  */
+
+  findHouse(
+    padded,
+    String(Number(padded))
+  );
+
 }
+
+
+/* =========================================
+   CARI RUMAH
+========================================= */
+
+function findHouse(paddedCode, numericCode){
+
+  document.getElementById('msg')
+    .textContent =
+    'Mencari rumah ' + paddedCode + '...';
+
+
+  jsonp(
+    {
+      action:'house',
+      token:token,
+      kode:paddedCode
+    },
+
+    function(r){
+
+      if(r.ok){
+
+        showHouse(r);
+        return;
+      }
+
+
+      /*
+        Jika 001 tidak ditemukan,
+        coba 1.
+      */
+
+      jsonp(
+        {
+          action:'house',
+          token:token,
+          kode:numericCode
+        },
+
+        function(r2){
+
+          if(!r2.ok){
+
+            if(r2.auth === false){
+
+              logout();
+              return;
+            }
+
+            document.getElementById('msg')
+              .textContent =
+              'Rumah ' +
+              paddedCode +
+              ' tidak ditemukan.';
+
+            document
+              .getElementById('houseCard')
+              .classList.add('hidden');
+
+            return;
+          }
+
+          showHouse(r2);
+
+        }
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================================
+   TAMPILKAN RUMAH
+========================================= */
+
+function showHouse(r){
+
+  current = r.house;
+
+  document
+    .getElementById('houseCard')
+    .classList.remove('hidden');
+
+
+  document
+    .getElementById('houseName')
+    .textContent =
+    r.house.nama;
+
+
+  document
+    .getElementById('houseCode')
+    .textContent =
+    'Kode: ' +
+    String(r.house.kode).padStart(3,'0');
+
+
+  const status =
+    document.getElementById('houseStatus');
+
+
+  if(r.paid){
+
+    status.textContent =
+      'SUDAH BAYAR MINGGU INI';
+
+    status.className =
+      'ok';
+
+  }else{
+
+    status.textContent =
+      'BELUM BAYAR · ' +
+      format(r.house.nominal);
+
+    status.className =
+      '';
+
+  }
+
+
+  const payBtn =
+    document.getElementById('payBtn');
+
+
+  payBtn.disabled =
+    !!r.paid;
+
+
+  payBtn.textContent =
+    r.paid
+      ? 'Sudah Bayar Minggu Ini'
+      : 'Catat Pembayaran ' +
+        format(r.house.nominal);
+
+
+  document.getElementById('msg')
+    .textContent =
+    '';
+
+}
+
+
+/* =========================================
+   CATAT PEMBAYARAN
+========================================= */
+
 function pay(){
- if(!current)return;
- payBtn.disabled=true;
- jsonp({action:'pay',token:token,kode:current.kode},r=>{
-   msg.textContent=r.message;
-   if(r.ok){houseStatus.textContent='SUDAH BAYAR MINGGU INI';houseStatus.className='ok';payBtn.textContent='Sudah Bayar Minggu Ini'}
-   else {payBtn.disabled=false;if(r.auth===false)logout()}
- });
+
+  if(!current){
+
+    return;
+  }
+
+
+  const payBtn =
+    document.getElementById('payBtn');
+
+
+  payBtn.disabled = true;
+
+
+  jsonp(
+    {
+      action:'pay',
+      token:token,
+      kode:current.kode
+    },
+
+    function(r){
+
+      document.getElementById('msg')
+        .textContent =
+        r.message || 'Selesai.';
+
+
+      if(r.ok){
+
+        document
+          .getElementById('houseStatus')
+          .textContent =
+          'SUDAH BAYAR MINGGU INI';
+
+        document
+          .getElementById('houseStatus')
+          .className =
+          'ok';
+
+        payBtn.textContent =
+          'Sudah Bayar Minggu Ini';
+
+      }else{
+
+        payBtn.disabled = false;
+
+        if(r.auth === false){
+
+          logout();
+
+        }
+
+      }
+
+    }
+  );
+
 }
-function format(n){return 'Rp'+Number(n||0).toLocaleString('id-ID')}
+
+
+/* =========================================
+   FORMAT RUPIAH
+========================================= */
+
+function format(n){
+
+  return 'Rp' +
+    Number(n || 0)
+      .toLocaleString('id-ID');
+
+}
+
+
+/* =========================================
+   START CAMERA
+========================================= */
+
 function startScan(){
- if(!token){loginMsg.textContent='Login dulu.';return}
- if(scanner)return;
- scanner=new Html5Qrcode('reader');
- scanner.start({facingMode:{exact:'environment'}},{fps:10,qrbox:{width:260,height:260}},txt=>{
-   const m=txt.match(/JIMPITAN(?::MIRIOMBO)?[:\-](\d{3})/i);
-   if(m){handleCode(m[1]);stopScan()}
- },()=>{}).catch(e=>{msg.textContent='Kamera gagal dibuka: '+e.message});
+
+  if(!token){
+
+    document.getElementById('msg')
+      .textContent =
+      'Login dulu.';
+
+    return;
+  }
+
+
+  if(scanner){
+
+    return;
+  }
+
+
+  scanner =
+    new Html5Qrcode('reader');
+
+
+  scanner
+    .start(
+
+      {
+        facingMode:{
+          exact:'environment'
+        }
+      },
+
+      {
+        fps:10,
+        qrbox:{
+          width:260,
+          height:260
+        }
+      },
+
+      function(txt){
+
+        /*
+          Terima beberapa format QR:
+
+          JIMPITAN:MIRIOMBO:001
+          JIMPITAN-MIRIOMBO-001
+          JIMPITAN:001
+          001
+        */
+
+        const match =
+          txt.match(/(\d{1,3})\s*$/);
+
+
+        if(match){
+
+          handleCode(match[1]);
+
+          stopScan();
+
+        }
+
+      },
+
+      function(errorMessage){
+
+        /* Abaikan error scanning sementara */
+
+      }
+
+    )
+
+    .catch(function(e){
+
+      document.getElementById('msg')
+        .textContent =
+        'Kamera gagal dibuka: ' +
+        e.message;
+
+    });
+
 }
-function stopScan(){if(scanner){scanner.stop().then(()=>{scanner.clear();scanner=null}).catch(()=>{})}}
-function clearHouse(){current=null;houseCard.classList.add('hidden');msg.textContent='';}
-function logout(){token='';user=null;sessionStorage.clear();stopScan();scanCard.classList.add('hidden');houseCard.classList.add('hidden');loginCard.classList.remove('hidden');}
-if(token&&user){loginCard.classList.add('hidden');scanCard.classList.remove('hidden');document.getElementById('user').textContent=user.name+' · '+user.role}
+
+
+/* =========================================
+   STOP CAMERA
+========================================= */
+
+function stopScan(){
+
+  if(!scanner){
+
+    return;
+  }
+
+
+  scanner
+    .stop()
+
+    .then(function(){
+
+      scanner.clear();
+
+      scanner = null;
+
+    })
+
+    .catch(function(){
+
+      scanner = null;
+
+    });
+
+}
+
+
+/* =========================================
+   CLEAR RUMAH
+========================================= */
+
+function clearHouse(){
+
+  current = null;
+
+  document
+    .getElementById('houseCard')
+    .classList.add('hidden');
+
+  document
+    .getElementById('msg')
+    .textContent =
+    '';
+
+}
+
+
+/* =========================================
+   LOGOUT
+========================================= */
+
+function logout(){
+
+  token = '';
+  user = null;
+
+  sessionStorage.clear();
+
+  stopScan();
+
+  document
+    .getElementById('scanCard')
+    .classList.add('hidden');
+
+  document
+    .getElementById('houseCard')
+    .classList.add('hidden');
+
+  document
+    .getElementById('loginCard')
+    .classList.remove('hidden');
+
+}
+
+
+/* =========================================
+   RESTORE SESSION
+========================================= */
+
+if(token && user){
+
+  document
+    .getElementById('loginCard')
+    .classList.add('hidden');
+
+  document
+    .getElementById('scanCard')
+    .classList.remove('hidden');
+
+  document
+    .getElementById('user')
+    .textContent =
+    user.name +
+    ' · ' +
+    user.role;
+
+}
+
 </script>
-</body></html>
+
+</body>
+</html>
